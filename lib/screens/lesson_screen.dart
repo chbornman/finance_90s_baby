@@ -8,7 +8,7 @@ class LessonScreen extends StatelessWidget {
   final DatabaseAPI databaseAPI;
   final Map<String, dynamic> lesson;
 
-  LessonScreen({
+  const LessonScreen({super.key, 
     required this.storageAPI,
     required this.databaseAPI,
     required this.lesson,
@@ -21,12 +21,12 @@ class LessonScreen extends StatelessWidget {
       body: FutureBuilder<String>(
         future: storageAPI.getLessonContent(lesson['fileId']),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) return CircularProgressIndicator();
+          if (!snapshot.hasData) return const CircularProgressIndicator();
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(snapshot.data!, style: TextStyle(fontSize: 16)),
+                Text(snapshot.data!, style: const TextStyle(fontSize: 16)),
                 CommentSection(
                   lessonId: lesson['\$id'],
                   databaseAPI: databaseAPI, // Pass databaseAPI here

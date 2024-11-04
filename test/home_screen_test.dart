@@ -13,7 +13,7 @@ void main() {
 
   testWidgets('displays loading indicator while fetching lessons', (WidgetTester tester) async {
     // Arrange
-    when(mockDatabaseAPI.getLessons()).thenAnswer((_) async => Future.delayed(Duration(seconds: 1), () => []));
+    when(mockDatabaseAPI.getLessons()).thenAnswer((_) async => Future.delayed(const Duration(seconds: 1), () => []));
 
     // Act
     await tester.pumpWidget(
@@ -26,7 +26,7 @@ void main() {
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
     // Simulate a 1-second delay to allow the Future to complete
-    await tester.pump(Duration(seconds: 1));
+    await tester.pump(const Duration(seconds: 1));
 
     // Ensure the widget tree updates after the delay
     await tester.pumpAndSettle();

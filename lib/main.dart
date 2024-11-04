@@ -24,7 +24,7 @@ void main() {
 class MyApp extends StatelessWidget {
   final Client client;
 
-  MyApp({required this.client});
+  const MyApp({super.key, required this.client});
 
   @override
   Widget build(BuildContext context) {

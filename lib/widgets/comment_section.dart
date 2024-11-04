@@ -5,14 +5,14 @@ class CommentSection extends StatelessWidget {
   final String lessonId;
   final DatabaseAPI databaseAPI;
 
-  CommentSection({required this.lessonId, required this.databaseAPI});
+  const CommentSection({super.key, required this.lessonId, required this.databaseAPI});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         TextField(
-          decoration: InputDecoration(labelText: 'Add a comment'),
+          decoration: const InputDecoration(labelText: 'Add a comment'),
           onSubmitted: (text) {
             databaseAPI.addComment(lessonId, text);
           },

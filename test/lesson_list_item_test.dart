@@ -31,7 +31,7 @@ void main() {
           body: LessonListItem(lesson: lesson),
         ),
         routes: {
-          '/lesson': (context) => Scaffold(body: Text('Lesson Details Screen')),
+          '/lesson': (context) => const Scaffold(body: Text('Lesson Details Screen')),
         },
       ),
     );

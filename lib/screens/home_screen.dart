@@ -5,16 +5,16 @@ import '../widgets/lesson_list_item.dart';
 class HomeScreen extends StatelessWidget {
   final DatabaseAPI databaseAPI;
 
-  HomeScreen(this.databaseAPI);
+  const HomeScreen(this.databaseAPI, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Finance Course')),
+      appBar: AppBar(title: const Text('Finance Course')),
       body: FutureBuilder<List>(
         future: databaseAPI.getLessons(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) return CircularProgressIndicator();
+          if (!snapshot.hasData) return const CircularProgressIndicator();
           final lessons = snapshot.data!;
           return ListView.builder(
             itemCount: lessons.length,
@@ -28,8 +28,8 @@ class HomeScreen extends StatelessWidget {
         onPressed: () {
           Navigator.pushNamed(context, '/feedback');
         },
-        child: Icon(Icons.feedback),
         tooltip: 'Give thoughts and feedback',
+        child: const Icon(Icons.feedback),
       ),
     );
   }

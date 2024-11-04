@@ -28,7 +28,7 @@ void main() {
       (WidgetTester tester) async {
     // Arrange: Set up mock to simulate loading state
     when(mockStorageAPI.getLessonContent(any))
-        .thenAnswer((_) async => Future.delayed(Duration(seconds: 2)));
+        .thenAnswer((_) async => Future.delayed(const Duration(seconds: 2)));
 
     // Act: Build the LessonScreen widget
     await tester.pumpWidget(
