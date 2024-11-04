@@ -1,5 +1,6 @@
 import 'package:finance_90s_baby/api/database_api.dart';
 import 'package:finance_90s_baby/api/storage_api.dart';
+import 'package:finance_90s_baby/log_service.dart';
 import 'package:flutter/material.dart';
 import 'package:appwrite/appwrite.dart';
 import 'constants.dart';
@@ -9,6 +10,7 @@ import 'screens/feedback_screen.dart';
 import 'screens/lesson_screen.dart';
 
 void main() {
+  LogService.instance.info("App started");
   WidgetsFlutterBinding.ensureInitialized();
 
   Client client = Client();
@@ -32,8 +34,11 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => HomeScreen(DatabaseAPI(Databases(client))),
-        '/feedback': (context) =>
-            FeedbackScreen(DatabaseAPI(Databases(client))),
+        '/feedback': (context) {
+          LogService.instance
+              .info("Navigated to FeedbackScreen"); // Log info message
+          return FeedbackScreen(DatabaseAPI(Databases(client)));
+        },
         '/lesson': (context) => LessonScreen(
               storageAPI: StorageAPI(Storage(client)),
               databaseAPI:
