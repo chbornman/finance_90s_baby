@@ -6,9 +6,11 @@ import 'api_mocks.mocks.dart';
 
 void main() {
   late MockDatabaseAPI mockDatabaseAPI;
+  late MockStorageAPI mockStorageAPI;
 
   setUp(() {
     mockDatabaseAPI = MockDatabaseAPI();
+    mockStorageAPI = MockStorageAPI();
   });
 
   testWidgets('displays loading indicator while fetching lessons', (WidgetTester tester) async {
@@ -18,7 +20,7 @@ void main() {
     // Act
     await tester.pumpWidget(
       MaterialApp(
-        home: HomeScreen(mockDatabaseAPI),
+        home: HomeScreen(mockDatabaseAPI, mockStorageAPI),
       ),
     );
 

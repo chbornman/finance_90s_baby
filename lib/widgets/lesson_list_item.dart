@@ -1,17 +1,16 @@
+import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
 
 class LessonListItem extends StatelessWidget {
-  final Map<String, dynamic> lesson;
+  final Document lesson; // Update this to expect Document type
 
-  const LessonListItem({super.key, required this.lesson});
+  const LessonListItem({required this.lesson});
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(lesson['title']),
-      onTap: () {
-        Navigator.pushNamed(context, '/lesson', arguments: lesson);
-      },
+      title: Text(lesson.data['title'] ?? 'Untitled'),
+      // Additional data access from lesson.data
     );
   }
 }

@@ -12,19 +12,22 @@ import 'screens/lesson_screen.dart';
 void main() {
   LogService.instance.info("App started");
   WidgetsFlutterBinding.ensureInitialized();
+  final client = Client()
+      .setEndpoint(AppConstants.appwriteEndpoint) // Your Appwrite endpoint
+      .setProject(AppConstants.projectId); // Your Appwrite project ID
 
-  Client client = Client();
-  client
-      .setEndpoint(AppConstants.appwriteEndpoint)
-      .setProject(AppConstants.projectId);
+  final databases = Databases(client);
+  final storage = Storage(client);
 
-  runApp(MyApp(client: client));
+  runApp(MyApp(database: DatabaseAPI(databases), storage: StorageAPI(storage)));
 }
 
 class MyApp extends StatelessWidget {
-  final Client client;
+  final DatabaseAPI database;
+  final StorageAPI storage;
 
-  const MyApp({super.key, required this.client});
+  const MyApp({Key? key, required this.database, required this.storage})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,16 +36,17 @@ class MyApp extends StatelessWidget {
       theme: appTheme,
       initialRoute: '/',
       routes: {
-        '/': (context) => HomeScreen(DatabaseAPI(Databases(client))),
+        '/': (context) => HomeScreen(
+              database,
+              storage,
+            ),
         '/feedback': (context) {
-          LogService.instance
-              .info("Navigated to FeedbackScreen"); // Log info message
-          return FeedbackScreen(DatabaseAPI(Databases(client)));
+          LogService.instance.info("Navigated to FeedbackScreen");
+          return FeedbackScreen(database);
         },
         '/lesson': (context) => LessonScreen(
-              storageAPI: StorageAPI(Storage(client)),
-              databaseAPI:
-                  DatabaseAPI(Databases(client)), // Pass databaseAPI here
+              storageAPI: storage,
+              databaseAPI: database,
               lesson: ModalRoute.of(context)!.settings.arguments
                   as Map<String, dynamic>,
             ),

@@ -19,7 +19,7 @@ class LessonScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(lesson['title'])),
       body: FutureBuilder<String>(
-        future: storageAPI.getLessonContent(lesson['fileId']),
+        future: storageAPI.getLessonContent(lesson['fileId']).then((value) => value ?? ''),
         builder: (context, snapshot) {
           if (!snapshot.hasData) return const CircularProgressIndicator();
           return SingleChildScrollView(

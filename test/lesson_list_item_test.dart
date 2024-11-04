@@ -1,3 +1,4 @@
+import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:finance_90s_baby/widgets/lesson_list_item.dart';
@@ -5,7 +6,15 @@ import 'package:finance_90s_baby/widgets/lesson_list_item.dart';
 void main() {
   testWidgets('displays lesson title', (WidgetTester tester) async {
     // Arrange
-    final lesson = {'title': 'Sample Lesson'};
+    final lesson = Document(
+      $id: 'Sample Lesson ID',
+      $collectionId: 'Sample Collection ID',
+      $databaseId: 'Sample Database ID',
+      $createdAt: '2023-01-01T00:00:00.000Z',
+      $updatedAt: '2023-01-01T00:00:00.000Z',
+      $permissions: [],
+      data: {'title': 'Sample Lesson'},
+    );
 
     // Act
     await tester.pumpWidget(
@@ -22,7 +31,15 @@ void main() {
 
   testWidgets('navigates to lesson details on tap', (WidgetTester tester) async {
     // Arrange
-    final lesson = {'title': 'Sample Lesson'};
+    final lesson = Document(
+      $id: 'Sample Lesson ID',
+      $collectionId: 'Sample Collection ID',
+      $databaseId: 'Sample Database ID',
+      $createdAt: '2023-01-01T00:00:00.000Z',
+      $updatedAt: '2023-01-01T00:00:00.000Z',
+      $permissions: [],
+      data: {'title': 'Sample Lesson'},
+    );
     
     // Act
     await tester.pumpWidget(
