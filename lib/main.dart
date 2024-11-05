@@ -48,6 +48,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   late Future<bool> isUserLoggedIn;
   String? userId; // Store the user ID
+  String userRole = 'user'; // Initialize userRole with default value
 
   @override
   void initState() {
@@ -60,6 +61,14 @@ class _MyAppState extends State<MyApp> {
       final user = await widget.authAPI.getCurrentUser();
       if (user != null) {
         userId = user.$id; // Save the user ID
+
+        // Fetch and store user role
+        final role = await widget.authAPI.getUserRole();
+        setState(() {
+          userRole =
+              role ?? 'user'; // Update userRole with fetched value or default
+        });
+
         return true;
       }
     } catch (e) {
@@ -85,8 +94,12 @@ class _MyAppState extends State<MyApp> {
           }
 
           if (snapshot.data == true && userId != null) {
-            // Pass userId to HomeScreen and set up routes
-            return HomeScreen(widget.database, widget.storage);
+            // Pass userRole to HomeScreen
+            return HomeScreen(
+              widget.database,
+              widget.storage,
+              userRole: userRole,
+            );
           } else {
             return LoginRegisterScreen(
               widget.authAPI,
@@ -101,7 +114,11 @@ class _MyAppState extends State<MyApp> {
         },
       ),
       routes: {
-        '/home': (context) => HomeScreen(widget.database, widget.storage),
+        '/home': (context) => HomeScreen(
+              widget.database,
+              widget.storage,
+              userRole: userRole,
+            ),
         '/feedback': (context) {
           LogService.instance.info("Navigated to FeedbackScreen");
           return FeedbackScreen(widget.database, userId: userId!);

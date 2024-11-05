@@ -10,22 +10,16 @@ import 'lesson_screen.dart';
 class HomeScreen extends StatefulWidget {
   final DatabaseAPI databaseAPI;
   final StorageAPI storageAPI;
+  final String userRole; // Add this line to receive userRole
 
-  const HomeScreen(this.databaseAPI, this.storageAPI, {super.key});
+  const HomeScreen(this.databaseAPI, this.storageAPI,
+      {super.key, required this.userRole});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool isAdmin = false;
-
-  void _toggleMode() {
-    setState(() {
-      isAdmin = !isAdmin;
-    });
-  }
-
   Future<void> _uploadLesson() async {
     final pickedFile = await widget.storageAPI.pickFile();
     if (pickedFile == null) return;
@@ -120,13 +114,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Finance Course'),
-        actions: [
-          IconButton(
-            icon: Icon(isAdmin ? Icons.admin_panel_settings : Icons.person),
-            onPressed: _toggleMode,
-            tooltip: isAdmin ? 'Switch to User Mode' : 'Switch to Admin Mode',
-          ),
-        ],
       ),
       body: FutureBuilder<List>(
         future: widget.databaseAPI.getLessons(),
@@ -161,19 +148,19 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         },
       ),
-      floatingActionButton: isAdmin
+      floatingActionButton: widget.userRole == "admin"
           ? Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 FloatingActionButton(
-                  heroTag: "uploadButton", // Unique heroTag
+                  heroTag: "uploadButton",
                   onPressed: _uploadLesson,
                   tooltip: 'Upload Lesson',
                   child: const Icon(Icons.upload_file),
                 ),
                 const SizedBox(height: 8),
                 FloatingActionButton(
-                  heroTag: "deleteButton", // Unique heroTag
+                  heroTag: "deleteButton",
                   onPressed: _deleteLessonDialog,
                   tooltip: 'Delete Lesson',
                   child: const Icon(Icons.delete),
@@ -181,7 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             )
           : FloatingActionButton(
-              heroTag: "feedbackButton", // Unique heroTag for non-admin button
+              heroTag: "feedbackButton",
               onPressed: () {
                 Navigator.pushNamed(context, '/feedback');
               },
