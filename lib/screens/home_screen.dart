@@ -1,11 +1,11 @@
 import 'package:finance_90s_baby/constants.dart';
 import 'package:finance_90s_baby/log_service.dart';
 import 'package:finance_90s_baby/markdown_utilities.dart';
+import 'package:finance_90s_baby/markdownviewer.dart';
 import 'package:flutter/material.dart';
 import '../api/database_api.dart';
 import '../api/storage_api.dart';
 import '../widgets/lesson_list_item.dart';
-import 'lesson_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final DatabaseAPI databaseAPI;
@@ -127,18 +127,21 @@ class _HomeScreenState extends State<HomeScreen> {
             itemBuilder: (context, index) {
               final lesson = lessons[index];
               return InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => LessonScreen(
-                        storageAPI: widget.storageAPI,
-                        databaseAPI: widget.databaseAPI,
-                        lesson: lesson,
-                        userId: '',
+                onTap: () async {
+                  final content = await widget.storageAPI.getLessonContent(lesson['fileId']);
+                  if (content != null) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MarkdownViewer(
+                          content: content,
+                          title: 'test Caleb',
+                        ),
                       ),
-                    ),
-                  );
+                    );
+                  } else {
+                    LogService.instance.error("Failed to load lesson content.");
+                  }
                 },
                 child: LessonListItem(
                   lesson: lesson,

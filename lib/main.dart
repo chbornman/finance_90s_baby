@@ -8,7 +8,6 @@ import 'constants.dart';
 import 'theme.dart';
 import 'screens/home_screen.dart';
 import 'screens/feedback_screen.dart';
-import 'screens/lesson_screen.dart';
 import 'screens/login_register_screen.dart';
 
 void main() {
@@ -123,13 +122,6 @@ class _MyAppState extends State<MyApp> {
           LogService.instance.info("Navigated to FeedbackScreen");
           return FeedbackScreen(widget.database, userId: userId!);
         },
-        '/lesson': (context) => LessonScreen(
-              userId: userId!,
-              storageAPI: widget.storage,
-              databaseAPI: widget.database,
-              lesson: ModalRoute.of(context)!.settings.arguments
-                  as Map<String, dynamic>,
-            ),
       },
     );
   }
