@@ -3,6 +3,7 @@ import 'package:finance_90s_baby/log_service.dart';
 import 'package:finance_90s_baby/markdown_utilities.dart';
 import 'package:finance_90s_baby/markdownviewer.dart';
 import 'package:flutter/material.dart';
+import '../api/auth_api.dart';
 import '../api/database_api.dart';
 import '../api/storage_api.dart';
 import '../widgets/lesson_list_item.dart';
@@ -10,17 +11,23 @@ import '../widgets/lesson_list_item.dart';
 class HomeScreen extends StatefulWidget {
   final DatabaseAPI databaseAPI;
   final StorageAPI storageAPI;
+  final AuthAPI authAPI;
   final String userRole;
-  final String userId; // Add userId to track specific user
+  final String userId;
 
   const HomeScreen(this.databaseAPI, this.storageAPI,
-      {super.key, required this.userRole, required this.userId});
+      {super.key, required this.userRole, required this.userId, required this.authAPI});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  Future<void> _signOut() async {
+    await widget.authAPI.logoutUser(); // Perform sign-out
+    Navigator.pushReplacementNamed(context, '/login'); // Navigate to login screen
+  }
+
   Future<void> _uploadLesson() async {
     final pickedFile = await widget.storageAPI.pickFile();
     if (pickedFile == null) return;
@@ -119,6 +126,14 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Finance Course'),
+        backgroundColor: const Color(0xFFAEC6CF), // Set to pastel blue color
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: _signOut, // Sign out when pressed
+            tooltip: 'Sign Out',
+          ),
+        ],
       ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: widget.databaseAPI.getLessons(),
@@ -155,8 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               title: 'Lesson Viewer',
                               lessonId: lesson['\$id'],
                               userId: widget.userId,
-                              isCompleted: lesson['completed'] ??
-                                  false, // Pass completion status
+                              isCompleted: lesson['completed'] ?? false,
                               onComplete: () async {
                                 await widget.databaseAPI.markLessonCompleted(
                                     widget.userId, lesson['\$id'], true);

@@ -46,8 +46,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late Future<bool> isUserLoggedIn;
-  String? userId; // Store the user ID
-  String userRole = 'user'; // Initialize userRole with default value
+  String? userId;
+  String userRole = 'user';
 
   @override
   void initState() {
@@ -59,22 +59,15 @@ class _MyAppState extends State<MyApp> {
     try {
       final user = await widget.authAPI.getCurrentUser();
       if (user != null) {
-        userId = user.$id; // Save the user ID
-
-        // Fetch and store user role
+        userId = user.$id;
         final role = await widget.authAPI.getUserRole();
         setState(() {
-          userRole = role ?? 'user'; // Update userRole with fetched value or default
+          userRole = role ?? 'user';
         });
-
         return true;
       }
     } catch (e) {
-      if (e is AppwriteException && e.code == 401) {
-        LogService.instance.info("User not logged in. Continuing as guest.");
-      } else {
-        LogService.instance.error("Unexpected error: $e");
-      }
+      LogService.instance.error("Error: $e");
     }
     return false;
   }
@@ -92,22 +85,18 @@ class _MyAppState extends State<MyApp> {
           }
 
           if (snapshot.data == true && userId != null) {
-            // Pass userRole and userId to HomeScreen
             return HomeScreen(
               widget.database,
               widget.storage,
               userRole: userRole,
               userId: userId!,
+              authAPI: widget.authAPI,
             );
           } else {
             return LoginRegisterScreen(
               widget.authAPI,
-              onLoginSuccess: () {
-                setState(() {
-                  // Re-run the check to update the logged-in state and userId
-                  isUserLoggedIn = _checkUserLoggedIn();
-                });
-              },
+              onLoginSuccess: () =>
+                  Navigator.pushReplacementNamed(context, '/home'),
             );
           }
         },
@@ -118,11 +107,17 @@ class _MyAppState extends State<MyApp> {
               widget.storage,
               userRole: userRole,
               userId: userId!,
+              authAPI: widget.authAPI,
             ),
         '/feedback': (context) {
           LogService.instance.info("Navigated to FeedbackScreen");
           return FeedbackScreen(widget.database, userId: userId!);
         },
+        '/login': (context) => LoginRegisterScreen(
+              widget.authAPI,
+              onLoginSuccess: () =>
+                  Navigator.pushReplacementNamed(context, '/home'),
+            ),
       },
     );
   }
