@@ -5,4 +5,5 @@ class AppConstants {
   static const String feedbackCollectionId = 'finance90sbaby-feedback';
   static const String appwriteEndpoint = 'https://cloud.appwrite.io/v1';
   static const String bucketIdLessonContent = 'finance90sbaby-lessonContent';
+  static const String userProgressCollectionId = 'finance90sbaby-user-progress';
 }

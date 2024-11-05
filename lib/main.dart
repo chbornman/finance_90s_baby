@@ -64,8 +64,7 @@ class _MyAppState extends State<MyApp> {
         // Fetch and store user role
         final role = await widget.authAPI.getUserRole();
         setState(() {
-          userRole =
-              role ?? 'user'; // Update userRole with fetched value or default
+          userRole = role ?? 'user'; // Update userRole with fetched value or default
         });
 
         return true;
@@ -93,11 +92,12 @@ class _MyAppState extends State<MyApp> {
           }
 
           if (snapshot.data == true && userId != null) {
-            // Pass userRole to HomeScreen
+            // Pass userRole and userId to HomeScreen
             return HomeScreen(
               widget.database,
               widget.storage,
               userRole: userRole,
+              userId: userId!,
             );
           } else {
             return LoginRegisterScreen(
@@ -117,6 +117,7 @@ class _MyAppState extends State<MyApp> {
               widget.database,
               widget.storage,
               userRole: userRole,
+              userId: userId!,
             ),
         '/feedback': (context) {
           LogService.instance.info("Navigated to FeedbackScreen");

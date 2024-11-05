@@ -87,7 +87,8 @@ class DatabaseAPI {
         collectionId: AppConstants.lessonsCollectionId,
         documentId: lessonId,
       );
-      LogService.instance.error("Lesson with ID $lessonId deleted successfully.");
+      LogService.instance
+          .error("Lesson with ID $lessonId deleted successfully.");
     } catch (e) {
       LogService.instance.error("Error deleting lesson: $e");
     }
@@ -108,6 +109,95 @@ class DatabaseAPI {
     } catch (e) {
       LogService.instance.error("Error fetching comments for lesson: $e");
       return [];
+    }
+  }
+
+  /// Updates the 'completed' status of a specific lesson in the lessons collection.
+  Future<void> updateLessonCompletion(String lessonId, bool? completed) async {
+    try {
+      await database.updateDocument(
+        databaseId: AppConstants.databaseId,
+        collectionId: AppConstants.lessonsCollectionId,
+        documentId: lessonId,
+        data: {
+          'completed': completed,
+        },
+      );
+      LogService.instance.info(
+          "Lesson with ID $lessonId completion status updated to $completed.");
+    } catch (e) {
+      LogService.instance.error("Error updating lesson completion status: $e");
+    }
+  }
+
+  /// Marks a lesson as completed or uncompleted for a specific user.
+  Future<void> markLessonCompleted(
+      String userId, String lessonId, bool completed) async {
+    try {
+      // Query for existing progress document for this user and lesson
+      final response = await database.listDocuments(
+        databaseId: AppConstants.databaseId,
+        collectionId: AppConstants
+            .userProgressCollectionId, // Collection for user progress
+        queries: [
+          Query.equal('userId', userId),
+          Query.equal('lessonId', lessonId),
+        ],
+      );
+
+      if (response.documents.isNotEmpty) {
+        // Update the existing document
+        await database.updateDocument(
+          databaseId: AppConstants.databaseId,
+          collectionId: AppConstants.userProgressCollectionId,
+          documentId: response.documents.first.$id,
+          data: {'completed': completed},
+        );
+      } else {
+        // Create a new progress document if none exists
+        await database.createDocument(
+          databaseId: AppConstants.databaseId,
+          collectionId: AppConstants.userProgressCollectionId,
+          documentId: ID.unique(),
+          data: {
+            'userId': userId,
+            'lessonId': lessonId,
+            'completed': completed,
+          },
+        );
+      }
+
+      LogService.instance.info(
+          "User $userId marked lesson $lessonId as completed: $completed.");
+    } catch (e) {
+      LogService.instance
+          .error("Error marking lesson as completed for user $userId: $e");
+    }
+  }
+
+  /// Checks if a lesson is completed by a specific user.
+  Future<bool> isLessonCompleted(String userId, String lessonId) async {
+    try {
+      // Query for the progress document for this user and lesson
+      final response = await database.listDocuments(
+        databaseId: AppConstants.databaseId,
+        collectionId: AppConstants.userProgressCollectionId,
+        queries: [
+          Query.equal('userId', userId),
+          Query.equal('lessonId', lessonId),
+        ],
+      );
+
+      // Check if a document exists and return its 'completed' status
+      if (response.documents.isNotEmpty) {
+        return response.documents.first.data['completed'] ?? false;
+      }
+
+      return false; // Return false if no document exists
+    } catch (e) {
+      LogService.instance.error(
+          "Error checking completion status for user $userId on lesson $lessonId: $e");
+      return false;
     }
   }
 }

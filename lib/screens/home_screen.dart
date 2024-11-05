@@ -10,10 +10,11 @@ import '../widgets/lesson_list_item.dart';
 class HomeScreen extends StatefulWidget {
   final DatabaseAPI databaseAPI;
   final StorageAPI storageAPI;
-  final String userRole; // Add this line to receive userRole
+  final String userRole;
+  final String userId; // Add userId to track specific user
 
   const HomeScreen(this.databaseAPI, this.storageAPI,
-      {super.key, required this.userRole});
+      {super.key, required this.userRole, required this.userId});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -109,13 +110,17 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future<bool> _getLessonCompletionStatus(String lessonId) async {
+    return await widget.databaseAPI.isLessonCompleted(widget.userId, lessonId);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Finance Course'),
       ),
-      body: FutureBuilder<List>(
+      body: FutureBuilder<List<Map<String, dynamic>>>(
         future: widget.databaseAPI.getLessons(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
@@ -126,26 +131,55 @@ class _HomeScreenState extends State<HomeScreen> {
             itemCount: lessons.length,
             itemBuilder: (context, index) {
               final lesson = lessons[index];
-              return InkWell(
-                onTap: () async {
-                  final content = await widget.storageAPI.getLessonContent(lesson['fileId']);
-                  if (content != null) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MarkdownViewer(
-                          content: content,
-                          title: 'test Caleb',
-                        ),
-                      ),
+
+              return FutureBuilder<bool>(
+                future: _getLessonCompletionStatus(lesson['\$id']),
+                builder: (context, completedSnapshot) {
+                  if (!completedSnapshot.hasData) {
+                    return const ListTile(
+                      title: Text("Loading..."),
                     );
-                  } else {
-                    LogService.instance.error("Failed to load lesson content.");
                   }
+                  lesson['completed'] = completedSnapshot.data;
+
+                  return InkWell(
+                    onTap: () async {
+                      final content = await widget.storageAPI
+                          .getLessonContent(lesson['fileId']);
+                      if (content != null) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MarkdownViewer(
+                              content: content,
+                              title: 'Lesson Viewer',
+                              lessonId: lesson['\$id'],
+                              userId: widget.userId,
+                              isCompleted: lesson['completed'] ??
+                                  false, // Pass completion status
+                              onComplete: () async {
+                                await widget.databaseAPI.markLessonCompleted(
+                                    widget.userId, lesson['\$id'], true);
+                                LogService.instance
+                                    .info("Lesson marked as complete.");
+                                setState(() {
+                                  lesson['completed'] = true;
+                                });
+                                Navigator.pop(context); // Return to HomeScreen
+                              },
+                            ),
+                          ),
+                        );
+                      } else {
+                        LogService.instance
+                            .error("Failed to load lesson content.");
+                      }
+                    },
+                    child: LessonListItem(
+                      lesson: lesson,
+                    ),
+                  );
                 },
-                child: LessonListItem(
-                  lesson: lesson,
-                ),
               );
             },
           );
