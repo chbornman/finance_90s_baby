@@ -166,9 +166,9 @@ class MockDatabaseAPI extends _i1.Mock implements _i6.DatabaseAPI {
       ) as _i4.Future<void>);
 
   @override
-  _i4.Future<List<Map<String, dynamic>>> getFeedback() => (super.noSuchMethod(
+  _i4.Future<List<Map<String, dynamic>>> getAllFeedback() => (super.noSuchMethod(
         Invocation.method(
-          #getFeedback,
+          #getAllFeedback,
           [],
         ),
         returnValue: _i4.Future<List<Map<String, dynamic>>>.value(

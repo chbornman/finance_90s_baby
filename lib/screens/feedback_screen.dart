@@ -15,7 +15,7 @@ class FeedbackScreen extends StatelessWidget {
         children: [
           Expanded(
             child: FutureBuilder<List<Map<String, dynamic>>>(
-              future: databaseAPI.getFeedback(),
+              future: databaseAPI.getAllFeedback(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());

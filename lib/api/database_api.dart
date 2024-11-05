@@ -66,7 +66,7 @@ class DatabaseAPI {
   }
 
   /// Retrieves feedback for all lessons from the feedback collection.
-  Future<List<Map<String, dynamic>>> getFeedback() async {
+  Future<List<Map<String, dynamic>>> getAllFeedback() async {
     try {
       final response = await database.listDocuments(
         databaseId: AppConstants.databaseId,
