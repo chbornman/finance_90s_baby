@@ -18,6 +18,7 @@ void main() {
         home: Scaffold(
           body: CommentSection(
             lessonId: 'lesson123',
+            userId: 'user456',
             databaseAPI: mockDatabaseAPI,
           ),
         ),
@@ -39,6 +40,7 @@ void main() {
         home: Scaffold(
           body: CommentSection(
             lessonId: 'lesson123',
+            userId: 'user456',
             databaseAPI: mockDatabaseAPI,
           ),
         ),

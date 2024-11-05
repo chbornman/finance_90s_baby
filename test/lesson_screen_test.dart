@@ -37,6 +37,7 @@ void main() {
           storageAPI: mockStorageAPI,
           databaseAPI: mockDatabaseAPI,
           lesson: sampleLesson,
+          userId: 'user456',
         ),
       ),
     );
@@ -45,9 +46,11 @@ void main() {
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
   });
 
-  testWidgets('displays lesson content once loaded', (WidgetTester tester) async {
+  testWidgets('displays lesson content once loaded',
+      (WidgetTester tester) async {
     // Arrange: Mock lesson content
-    when(mockStorageAPI.getLessonContent(any)).thenAnswer((_) async => 'Lesson content here.');
+    when(mockStorageAPI.getLessonContent(any))
+        .thenAnswer((_) async => 'Lesson content here.');
 
     // Act: Build the LessonScreen widget and trigger frame
     await tester.pumpWidget(
@@ -56,6 +59,7 @@ void main() {
           storageAPI: mockStorageAPI,
           databaseAPI: mockDatabaseAPI,
           lesson: sampleLesson,
+          userId: 'user456',
         ),
       ),
     );
@@ -68,9 +72,11 @@ void main() {
     expect(find.byType(CommentSection), findsOneWidget);
   });
 
-  testWidgets('displays comment section with correct lessonId', (WidgetTester tester) async {
+  testWidgets('displays comment section with correct lessonId',
+      (WidgetTester tester) async {
     // Arrange: Mock lesson content
-    when(mockStorageAPI.getLessonContent(any)).thenAnswer((_) async => 'Lesson content here.');
+    when(mockStorageAPI.getLessonContent(any))
+        .thenAnswer((_) async => 'Lesson content here.');
 
     // Act: Build the LessonScreen widget and trigger frame
     await tester.pumpWidget(
@@ -79,6 +85,7 @@ void main() {
           storageAPI: mockStorageAPI,
           databaseAPI: mockDatabaseAPI,
           lesson: sampleLesson,
+          userId: 'user456',
         ),
       ),
     );

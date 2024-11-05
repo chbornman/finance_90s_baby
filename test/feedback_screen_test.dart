@@ -15,7 +15,7 @@ void main() {
     // Act
     await tester.pumpWidget(
       MaterialApp(
-        home: FeedbackScreen(mockDatabaseAPI),
+        home: FeedbackScreen(mockDatabaseAPI, 'user456'),
       ),
     );
 
