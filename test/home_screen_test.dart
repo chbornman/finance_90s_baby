@@ -20,7 +20,7 @@ void main() {
     // Act
     await tester.pumpWidget(
       MaterialApp(
-        home: HomeScreen(mockDatabaseAPI, mockStorageAPI),
+        home: HomeScreen(mockDatabaseAPI, mockStorageAPI, userRole: 'user',),
       ),
     );
 

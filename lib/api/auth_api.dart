@@ -8,7 +8,7 @@ class AuthAPI {
   AuthAPI(Client client) : account = Account(client);
 
   Future<void> createUser(String email, String password) async {
-    // apparently assigning to a variable forces the await to wait for the result
+    // TODO lear about how apparently assigning to a variable forces the await to wait for the result
     final user = await account.create(
         userId: ID.unique(), email: email, password: password);
 

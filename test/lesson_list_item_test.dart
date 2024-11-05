@@ -20,7 +20,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: LessonListItem(lesson: lesson),
+          body: LessonListItem(lesson: lesson.data),
         ),
       ),
     );
@@ -45,7 +45,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: LessonListItem(lesson: lesson),
+          body: LessonListItem(lesson: lesson.data),
         ),
         routes: {
           '/lesson': (context) => const Scaffold(body: Text('Lesson Details Screen')),

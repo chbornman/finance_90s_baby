@@ -32,7 +32,7 @@ void main() {
 
   testWidgets('submits comment when Enter is pressed', (WidgetTester tester) async {
     // Arrange
-    when(mockDatabaseAPI.addComment(any, any)).thenAnswer((_) async => {});
+    when(mockDatabaseAPI.addComment(any, any, any)).thenAnswer((_) async => {});
 
     // Act
     await tester.pumpWidget(
@@ -51,6 +51,6 @@ void main() {
     await tester.pump();
 
     // Assert
-    verify(mockDatabaseAPI.addComment('lesson123', 'Nice lesson!')).called(1);
+    verify(mockDatabaseAPI.addComment('lesson123', 'userid485854738', 'Nice lesson!')).called(1);
   });
 }

@@ -15,7 +15,7 @@ void main() {
     // Act
     await tester.pumpWidget(
       MaterialApp(
-        home: FeedbackScreen(mockDatabaseAPI, 'user456'),
+        home: FeedbackScreen(mockDatabaseAPI, userId: 'user456'),
       ),
     );
 
@@ -24,14 +24,15 @@ void main() {
     expect(find.text('Your thoughts'), findsOneWidget);
   });
 
-  testWidgets('submits feedback when Enter is pressed', (WidgetTester tester) async {
+  testWidgets('submits feedback when Enter is pressed',
+      (WidgetTester tester) async {
     // Arrange
-    when(mockDatabaseAPI.addComment(any, any)).thenAnswer((_) async => {});
+    when(mockDatabaseAPI.addComment(any, any, any)).thenAnswer((_) async => {});
 
     // Act
     await tester.pumpWidget(
       MaterialApp(
-        home: FeedbackScreen(mockDatabaseAPI),
+        home: FeedbackScreen(mockDatabaseAPI, userId: 'user456'),
       ),
     );
     await tester.enterText(find.byType(TextField), 'Great app!');
@@ -39,6 +40,7 @@ void main() {
     await tester.pump();
 
     // Assert
-    verify(mockDatabaseAPI.addComment('feedback', 'Great app!')).called(1);
+    verify(mockDatabaseAPI.addComment('feedback', 'user456', 'Great app!'))
+        .called(1);
   });
 }

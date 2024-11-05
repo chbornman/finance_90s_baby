@@ -6,10 +6,10 @@
 import 'dart:async' as _i4;
 
 import 'package:appwrite/appwrite.dart' as _i2;
+import 'package:file_picker/file_picker.dart' as _i5;
 import 'package:finance_90s_baby/api/database_api.dart' as _i6;
 import 'package:finance_90s_baby/api/storage_api.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i5;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -62,19 +62,41 @@ class MockStorageAPI extends _i1.Mock implements _i3.StorageAPI {
       ) as _i2.Storage);
 
   @override
-  _i4.Future<String> getLessonContent(String? fileId) => (super.noSuchMethod(
+  _i4.Future<String?> getLessonContent(String? fileId) => (super.noSuchMethod(
         Invocation.method(
           #getLessonContent,
           [fileId],
         ),
-        returnValue: _i4.Future<String>.value(_i5.dummyValue<String>(
-          this,
-          Invocation.method(
-            #getLessonContent,
-            [fileId],
-          ),
-        )),
-      ) as _i4.Future<String>);
+        returnValue: _i4.Future<String?>.value(),
+      ) as _i4.Future<String?>);
+
+  @override
+  _i4.Future<_i5.PlatformFile?> pickFile() => (super.noSuchMethod(
+        Invocation.method(
+          #pickFile,
+          [],
+        ),
+        returnValue: _i4.Future<_i5.PlatformFile?>.value(),
+      ) as _i4.Future<_i5.PlatformFile?>);
+
+  @override
+  _i4.Future<String?> uploadFile(_i5.PlatformFile? file) => (super.noSuchMethod(
+        Invocation.method(
+          #uploadFile,
+          [file],
+        ),
+        returnValue: _i4.Future<String?>.value(),
+      ) as _i4.Future<String?>);
+
+  @override
+  _i4.Future<void> deleteFile(String? fileId) => (super.noSuchMethod(
+        Invocation.method(
+          #deleteFile,
+          [fileId],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 }
 
 /// A class which mocks [DatabaseAPI].
@@ -86,37 +108,92 @@ class MockDatabaseAPI extends _i1.Mock implements _i6.DatabaseAPI {
   }
 
   @override
-  _i2.Databases get databases => (super.noSuchMethod(
-        Invocation.getter(#databases),
+  _i2.Databases get database => (super.noSuchMethod(
+        Invocation.getter(#database),
         returnValue: _FakeDatabases_1(
           this,
-          Invocation.getter(#databases),
+          Invocation.getter(#database),
         ),
       ) as _i2.Databases);
 
   @override
-  _i4.Future<List<dynamic>> getLessons() => (super.noSuchMethod(
+  _i4.Future<List<Map<String, dynamic>>> getLessons() => (super.noSuchMethod(
         Invocation.method(
           #getLessons,
           [],
         ),
-        returnValue: _i4.Future<List<dynamic>>.value(<dynamic>[]),
-      ) as _i4.Future<List<dynamic>>);
+        returnValue: _i4.Future<List<Map<String, dynamic>>>.value(
+            <Map<String, dynamic>>[]),
+      ) as _i4.Future<List<Map<String, dynamic>>>);
+
+  @override
+  _i4.Future<void> addLesson({
+    required String? title,
+    required String? fileUrl,
+    required String? fileId,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #addLesson,
+          [],
+          {
+            #title: title,
+            #fileUrl: fileUrl,
+            #fileId: fileId,
+          },
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
   _i4.Future<void> addComment(
     String? lessonId,
-    String? comment,
+    String? userId,
+    String? commentText,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #addComment,
           [
             lessonId,
-            comment,
+            userId,
+            commentText,
           ],
         ),
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<List<Map<String, dynamic>>> getFeedback() => (super.noSuchMethod(
+        Invocation.method(
+          #getFeedback,
+          [],
+        ),
+        returnValue: _i4.Future<List<Map<String, dynamic>>>.value(
+            <Map<String, dynamic>>[]),
+      ) as _i4.Future<List<Map<String, dynamic>>>);
+
+  @override
+  _i4.Future<void> deleteLesson(String? lessonId) => (super.noSuchMethod(
+        Invocation.method(
+          #deleteLesson,
+          [lessonId],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<List<Map<String, dynamic>>> getCommentsForLesson(
+          String? lessonId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getCommentsForLesson,
+          [lessonId],
+        ),
+        returnValue: _i4.Future<List<Map<String, dynamic>>>.value(
+            <Map<String, dynamic>>[]),
+      ) as _i4.Future<List<Map<String, dynamic>>>);
 }
