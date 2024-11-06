@@ -32,7 +32,12 @@ class _LessonCommentSectionState extends State<LessonCommentSection> {
     super.initState();
     _commentsFuture = widget.databaseAPI.getAllLessonComments(widget.lessonId);
     _lessonTitleFuture = widget.databaseAPI.getLessonTitle(widget.lessonId);
-    _isAdminFuture = Future.value(widget.authAPI.getUserRole() == 'admin');
+    _isAdminFuture = _checkIfAdmin();
+  }
+
+  Future<bool> _checkIfAdmin() async {
+    final role = await widget.authAPI.getUserRole();
+    return role == 'admin';
   }
 
   void _addComment() async {
