@@ -79,6 +79,22 @@ class DatabaseAPI {
     }
   }
 
+  /// Retrieves comments for a specific lesson from the comments collection.
+  Future<List<Map<String, dynamic>>> getAllLessonComments(
+      String lessonId) async {
+    try {
+      final response = await database.listDocuments(
+        databaseId: AppConstants.databaseId,
+        collectionId: 'finance90sbaby-comments',
+        queries: [Query.equal('lessonId', lessonId)],
+      );
+      return response.documents.map((doc) => doc.data).toList();
+    } catch (e) {
+      LogService.instance.error("Error fetching lesson comments: $e");
+      return [];
+    }
+  }
+
   /// Retrieves comments for a specific user from the comments collection.
   Future<List<Map<String, dynamic>>> getAllUserComments(String userId) async {
     try {

@@ -1,7 +1,7 @@
 import 'package:finance_90s_baby/constants.dart';
 import 'package:finance_90s_baby/log_service.dart';
 import 'package:finance_90s_baby/markdown_utilities.dart';
-import 'package:finance_90s_baby/markdownviewer.dart';
+import 'package:finance_90s_baby/lesson_viewer.dart';
 import 'package:flutter/material.dart';
 import '../api/auth_api.dart';
 import '../api/database_api.dart';
@@ -166,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => MarkdownViewer(
+                            builder: (context) => LessonViewer(
                               content: content,
                               title: 'Lesson Viewer',
                               lessonId: lesson['\$id'],

@@ -1,9 +1,10 @@
 import 'package:finance_90s_baby/api/database_api.dart';
+import 'package:finance_90s_baby/lesson_comment_section.dart';
 import 'package:finance_90s_baby/log_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
-class MarkdownViewer extends StatefulWidget {
+class LessonViewer extends StatefulWidget {
   final String title;
   final String content;
   bool isCompleted;
@@ -12,7 +13,7 @@ class MarkdownViewer extends StatefulWidget {
   final String lessonId;
   final Future<void> Function() onComplete;
 
-  MarkdownViewer({
+  LessonViewer({
     required this.title,
     required this.content,
     required this.isCompleted,
@@ -23,10 +24,10 @@ class MarkdownViewer extends StatefulWidget {
   });
 
   @override
-  _MarkdownViewerState createState() => _MarkdownViewerState();
+  _LessonViewerState createState() => _LessonViewerState();
 }
 
-class _MarkdownViewerState extends State<MarkdownViewer> {
+class _LessonViewerState extends State<LessonViewer> {
   final ScrollController _scrollController = ScrollController();
 
   void _leaveCommentOnLesson() {
@@ -107,7 +108,18 @@ class _MarkdownViewerState extends State<MarkdownViewer> {
               FloatingActionButton(
                 backgroundColor: Theme.of(context).colorScheme.secondary,
                 heroTag: 'commentButton',
-                onPressed: _leaveCommentOnLesson,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => LessonCommentSection(
+                        databaseAPI: widget.databaseAPI,
+                        lessonId: widget.lessonId,
+                        userId: widget.userId,
+                      ),
+                    ),
+                  );
+                },
                 child: Icon(Icons.comment),
               ),
             ],
