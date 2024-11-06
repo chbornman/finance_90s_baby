@@ -15,8 +15,8 @@ class HomeScreen extends StatefulWidget {
   final String userRole;
   final String userId;
 
-  const HomeScreen(this.databaseAPI, this.storageAPI,
-      {super.key, required this.userRole, required this.userId, required this.authAPI});
+  const HomeScreen(this.databaseAPI, this.storageAPI, this.authAPI,
+      {super.key, required this.userRole, required this.userId});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -25,7 +25,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   Future<void> _signOut() async {
     await widget.authAPI.logoutUser(); // Perform sign-out
-    Navigator.pushReplacementNamed(context, '/login'); // Navigate to login screen
+    Navigator.pushReplacementNamed(
+        context, '/login'); // Navigate to login screen
   }
 
   Future<void> _uploadLesson() async {
@@ -125,8 +126,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Finance Course'),
-        backgroundColor: const Color(0xFFAEC6CF), // Set to pastel blue color
+        title: const Text("90's Baby Finance"),
+        backgroundColor: Theme.of(context).primaryColor,
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -171,9 +172,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               lessonId: lesson['\$id'],
                               userId: widget.userId,
                               isCompleted: lesson['completed'] ?? false,
+                              databaseAPI: widget.databaseAPI,
                               onComplete: () async {
-                                await widget.databaseAPI.markLessonCompleted(
-                                    widget.userId, lesson['\$id'], true);
+                                await widget.databaseAPI
+                                    .markLessonCompletedUserProgress(
+                                        widget.userId, lesson['\$id'], true);
                                 LogService.instance
                                     .info("Lesson marked as complete.");
                                 setState(() {
@@ -204,6 +207,7 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 FloatingActionButton(
+                  backgroundColor: Theme.of(context).colorScheme.secondary,
                   heroTag: "uploadButton",
                   onPressed: _uploadLesson,
                   tooltip: 'Upload Lesson',
@@ -211,6 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 8),
                 FloatingActionButton(
+                  backgroundColor: Theme.of(context).colorScheme.secondary,
                   heroTag: "deleteButton",
                   onPressed: _deleteLessonDialog,
                   tooltip: 'Delete Lesson',
@@ -219,11 +224,12 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             )
           : FloatingActionButton(
-              heroTag: "feedbackButton",
+              backgroundColor: Theme.of(context).colorScheme.secondary,
+              heroTag: "commentsButton",
               onPressed: () {
-                Navigator.pushNamed(context, '/feedback');
+                Navigator.pushNamed(context, '/comments');
               },
-              tooltip: 'Give thoughts and feedback',
+              tooltip: 'Give thoughts and comments',
               child: const Icon(Icons.feedback),
             ),
     );

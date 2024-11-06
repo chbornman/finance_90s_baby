@@ -17,7 +17,9 @@ class LoginRegisterScreen extends StatefulWidget {
 class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool isLoginMode = true; // Toggle between login and register mode
+  final _userNameController =
+      TextEditingController(); // Add username controller
+  bool isLoginMode = true;
 
   void _toggleMode() {
     setState(() {
@@ -28,6 +30,7 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
   Future<void> _submit() async {
     final email = _emailController.text;
     final password = _passwordController.text;
+    final userName = _userNameController.text; // Get username from controller
 
     if (isLoginMode) {
       // Attempt login
@@ -40,7 +43,7 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
       }
     } else {
       // Attempt registration
-      final user = await widget.authAPI.registerUser(email, password);
+      final user = await widget.authAPI.registerUser(email, password, userName);
       if (user != null) {
         LogService.instance.error("Registration successful!");
         setState(() {
@@ -67,6 +70,18 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
                   isLoginMode ? 'Login' : 'Register',
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
+                if (!isLoginMode) ...[
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _userNameController,
+                    decoration: InputDecoration(
+                      labelText: 'Username',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 24),
                 TextField(
                   controller: _emailController,
@@ -107,7 +122,7 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
                     isLoginMode
                         ? "Don't have an account? Register"
                         : "Already have an account? Login",
-                    style: const TextStyle(color: Colors.blueAccent),
+                    style: TextStyle(color: Theme.of(context).primaryColor),
                   ),
                 ),
               ],
@@ -122,6 +137,7 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _userNameController.dispose(); // Dispose username controller
     super.dispose();
   }
 }

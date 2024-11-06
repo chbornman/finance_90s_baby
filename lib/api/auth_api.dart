@@ -22,12 +22,13 @@ class AuthAPI {
   }
 
   /// Registers a new user with email and password
-  Future<models.User?> registerUser(String email, String password) async {
+  Future<models.User?> registerUser(String email, String password, String name) async {
     try {
       return await account.create(
         userId: ID.unique(),
         email: email,
         password: password,
+        name: name,
       );
     } catch (e) {
       LogService.instance.error("Registration Error: $e");

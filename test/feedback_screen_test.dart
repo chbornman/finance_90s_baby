@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:finance_90s_baby/screens/feedback_screen.dart';
+import 'package:finance_90s_baby/screens/comments_screen.dart';
 import 'api_mocks.mocks.dart';
 
 void main() {
@@ -11,11 +11,11 @@ void main() {
     mockDatabaseAPI = MockDatabaseAPI();
   });
 
-  testWidgets('displays feedback input field', (WidgetTester tester) async {
+  testWidgets('displays comments input field', (WidgetTester tester) async {
     // Act
     await tester.pumpWidget(
       MaterialApp(
-        home: FeedbackScreen(mockDatabaseAPI, userId: 'user456'),
+        home: CommentsScreen(mockDatabaseAPI, userId: 'user456'),
       ),
     );
 
@@ -24,7 +24,7 @@ void main() {
     expect(find.text('Your thoughts'), findsOneWidget);
   });
 
-  testWidgets('submits feedback when Enter is pressed',
+  testWidgets('submits comments when Enter is pressed',
       (WidgetTester tester) async {
     // Arrange
     when(mockDatabaseAPI.addComment(any, any, any)).thenAnswer((_) async => {});
@@ -32,7 +32,7 @@ void main() {
     // Act
     await tester.pumpWidget(
       MaterialApp(
-        home: FeedbackScreen(mockDatabaseAPI, userId: 'user456'),
+        home: CommentsScreen(mockDatabaseAPI, userId: 'user456'),
       ),
     );
     await tester.enterText(find.byType(TextField), 'Great app!');
@@ -40,7 +40,7 @@ void main() {
     await tester.pump();
 
     // Assert
-    verify(mockDatabaseAPI.addComment('feedback', 'user456', 'Great app!'))
+    verify(mockDatabaseAPI.addComment('comments', 'user456', 'Great app!'))
         .called(1);
   });
 }

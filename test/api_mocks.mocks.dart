@@ -6,7 +6,9 @@
 import 'dart:async' as _i4;
 
 import 'package:appwrite/appwrite.dart' as _i2;
+import 'package:appwrite/models.dart' as _i8;
 import 'package:file_picker/file_picker.dart' as _i5;
+import 'package:finance_90s_baby/api/auth_api.dart' as _i7;
 import 'package:finance_90s_baby/api/database_api.dart' as _i6;
 import 'package:finance_90s_baby/api/storage_api.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;
@@ -36,6 +38,16 @@ class _FakeStorage_0 extends _i1.SmartFake implements _i2.Storage {
 
 class _FakeDatabases_1 extends _i1.SmartFake implements _i2.Databases {
   _FakeDatabases_1(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeAccount_2 extends _i1.SmartFake implements _i2.Account {
+  _FakeAccount_2(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -166,9 +178,10 @@ class MockDatabaseAPI extends _i1.Mock implements _i6.DatabaseAPI {
       ) as _i4.Future<void>);
 
   @override
-  _i4.Future<List<Map<String, dynamic>>> getAllFeedback() => (super.noSuchMethod(
+  _i4.Future<List<Map<String, dynamic>>> getAllComments() =>
+      (super.noSuchMethod(
         Invocation.method(
-          #getAllFeedback,
+          #getAllComments,
           [],
         ),
         returnValue: _i4.Future<List<Map<String, dynamic>>>.value(
@@ -196,4 +209,151 @@ class MockDatabaseAPI extends _i1.Mock implements _i6.DatabaseAPI {
         returnValue: _i4.Future<List<Map<String, dynamic>>>.value(
             <Map<String, dynamic>>[]),
       ) as _i4.Future<List<Map<String, dynamic>>>);
+
+  @override
+  _i4.Future<void> updateLessonCompletion(
+    String? lessonId,
+    bool? completed,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateLessonCompletion,
+          [
+            lessonId,
+            completed,
+          ],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> markLessonCompletedUserProgress(
+    String? userId,
+    String? lessonId,
+    bool? completed,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #markLessonCompletedUserProgress,
+          [
+            userId,
+            lessonId,
+            completed,
+          ],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<bool> isLessonCompleted(
+    String? userId,
+    String? lessonId,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #isLessonCompleted,
+          [
+            userId,
+            lessonId,
+          ],
+        ),
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
+}
+
+/// A class which mocks [AuthAPI].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockAuthAPI extends _i1.Mock implements _i7.AuthAPI {
+  MockAuthAPI() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i2.Account get account => (super.noSuchMethod(
+        Invocation.getter(#account),
+        returnValue: _FakeAccount_2(
+          this,
+          Invocation.getter(#account),
+        ),
+      ) as _i2.Account);
+
+  @override
+  _i4.Future<void> createUser(
+    String? email,
+    String? password,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #createUser,
+          [
+            email,
+            password,
+          ],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<String?> getUserRole() => (super.noSuchMethod(
+        Invocation.method(
+          #getUserRole,
+          [],
+        ),
+        returnValue: _i4.Future<String?>.value(),
+      ) as _i4.Future<String?>);
+
+  @override
+  _i4.Future<_i8.User?> registerUser(
+    String? email,
+    String? password,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #registerUser,
+          [
+            email,
+            password,
+          ],
+        ),
+        returnValue: _i4.Future<_i8.User?>.value(),
+      ) as _i4.Future<_i8.User?>);
+
+  @override
+  _i4.Future<_i8.Session?> loginUser(
+    String? email,
+    String? password,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #loginUser,
+          [
+            email,
+            password,
+          ],
+        ),
+        returnValue: _i4.Future<_i8.Session?>.value(),
+      ) as _i4.Future<_i8.Session?>);
+
+  @override
+  _i4.Future<void> logoutUser() => (super.noSuchMethod(
+        Invocation.method(
+          #logoutUser,
+          [],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<_i8.User?> getCurrentUser() => (super.noSuchMethod(
+        Invocation.method(
+          #getCurrentUser,
+          [],
+        ),
+        returnValue: _i4.Future<_i8.User?>.value(),
+      ) as _i4.Future<_i8.User?>);
 }

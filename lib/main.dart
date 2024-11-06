@@ -7,7 +7,7 @@ import 'package:appwrite/appwrite.dart';
 import 'constants.dart';
 import 'theme.dart';
 import 'screens/home_screen.dart';
-import 'screens/feedback_screen.dart';
+import 'screens/comments_screen.dart';
 import 'screens/login_register_screen.dart';
 
 void main() {
@@ -75,7 +75,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Finance Course',
+      title: '90\'s Baby Finance',
       theme: appTheme,
       home: FutureBuilder<bool>(
         future: isUserLoggedIn,
@@ -88,9 +88,9 @@ class _MyAppState extends State<MyApp> {
             return HomeScreen(
               widget.database,
               widget.storage,
+              widget.authAPI,
               userRole: userRole,
               userId: userId!,
-              authAPI: widget.authAPI,
             );
           } else {
             return LoginRegisterScreen(
@@ -105,13 +105,13 @@ class _MyAppState extends State<MyApp> {
         '/home': (context) => HomeScreen(
               widget.database,
               widget.storage,
+              widget.authAPI,
               userRole: userRole,
               userId: userId!,
-              authAPI: widget.authAPI,
             ),
-        '/feedback': (context) {
-          LogService.instance.info("Navigated to FeedbackScreen");
-          return FeedbackScreen(widget.database, userId: userId!);
+        '/comments': (context) {
+          LogService.instance.info("Navigated to CommentsScreen");
+          return CommentsScreen(databaseAPI: widget.database, userId: userId!);
         },
         '/login': (context) => LoginRegisterScreen(
               widget.authAPI,

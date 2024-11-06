@@ -45,16 +45,16 @@ class DatabaseAPI {
     }
   }
 
-  /// Adds a comment to a specific lesson in the feedback collection.
+  /// Adds a comment to a specific lesson or as a general comment in the comments collection.
   Future<void> addComment(
       String lessonId, String userId, String commentText) async {
     try {
       await database.createDocument(
         databaseId: AppConstants.databaseId,
-        collectionId: 'finance90sbaby-feedback',
+        collectionId: 'finance90sbaby-comments',
         documentId: ID.unique(),
         data: {
-          'lessonId': lessonId,
+          'lessonId': lessonId == 'general' ? null : lessonId,
           'userId': userId,
           'comment': commentText,
           'timestamp': DateTime.now().toIso8601String(),
@@ -65,16 +65,31 @@ class DatabaseAPI {
     }
   }
 
-  /// Retrieves feedback for all lessons from the feedback collection.
-  Future<List<Map<String, dynamic>>> getAllFeedback() async {
+  /// Retrieves comments for all lessons from the comments collection.
+  Future<List<Map<String, dynamic>>> getAllComments() async {
     try {
       final response = await database.listDocuments(
         databaseId: AppConstants.databaseId,
-        collectionId: 'finance90sbaby-feedback',
+        collectionId: 'finance90sbaby-comments',
       );
       return response.documents.map((doc) => doc.data).toList();
     } catch (e) {
-      LogService.instance.error("Error fetching feedback: $e");
+      LogService.instance.error("Error fetching comments: $e");
+      return [];
+    }
+  }
+
+  /// Retrieves comments for a specific user from the comments collection.
+  Future<List<Map<String, dynamic>>> getAllUserComments(String userId) async {
+    try {
+      final response = await database.listDocuments(
+        databaseId: AppConstants.databaseId,
+        collectionId: 'finance90sbaby-comments',
+        queries: [Query.equal('userId', userId)],
+      );
+      return response.documents.map((doc) => doc.data).toList();
+    } catch (e) {
+      LogService.instance.error("Error fetching user comments: $e");
       return [];
     }
   }
@@ -94,13 +109,13 @@ class DatabaseAPI {
     }
   }
 
-  /// Retrieves comments for a specific lesson from the feedback collection.
+  /// Retrieves comments for a specific lesson from the comments collection.
   Future<List<Map<String, dynamic>>> getCommentsForLesson(
       String lessonId) async {
     try {
       final response = await database.listDocuments(
         databaseId: AppConstants.databaseId,
-        collectionId: 'finance90sbaby-feedback',
+        collectionId: 'finance90sbaby-comments',
         queries: [
           Query.equal('lessonId', lessonId),
         ],
@@ -131,7 +146,7 @@ class DatabaseAPI {
   }
 
   /// Marks a lesson as completed or uncompleted for a specific user.
-  Future<void> markLessonCompleted(
+  Future<void> markLessonCompletedUserProgress(
       String userId, String lessonId, bool completed) async {
     try {
       // Query for existing progress document for this user and lesson
