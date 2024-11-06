@@ -46,7 +46,8 @@ class DatabaseAPI {
   }
 
   /// Adds a comment to a specific lesson or as a general comment in the comments collection.
-  Future<void> addComment(String lessonId, String userId, String userName, String commentText) async {
+  Future<void> addComment(String lessonId, String userId, String userName,
+      String commentText) async {
     try {
       await database.createDocument(
         databaseId: AppConstants.databaseId,
@@ -62,6 +63,21 @@ class DatabaseAPI {
       );
     } catch (e) {
       LogService.instance.error("Error adding comment: $e");
+    }
+  }
+
+  /// Deletes a comment from the comments collection.
+  Future<void> deleteComment(String commentId) async {
+    try {
+      await database.deleteDocument(
+        databaseId: AppConstants.databaseId,
+        collectionId: 'finance90sbaby-comments',
+        documentId: commentId,
+      );
+      LogService.instance
+          .info("Comment with ID $commentId deleted successfully.");
+    } catch (e) {
+      LogService.instance.error("Error deleting comment: $e");
     }
   }
 

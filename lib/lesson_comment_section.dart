@@ -23,13 +23,16 @@ class LessonCommentSection extends StatefulWidget {
 class _LessonCommentSectionState extends State<LessonCommentSection> {
   late Future<List<Map<String, dynamic>>> _commentsFuture;
   late Future<String?> _lessonTitleFuture;
+  late Future<bool> _isAdminFuture;
   final TextEditingController _commentController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     _commentsFuture = widget.databaseAPI.getAllLessonComments(widget.lessonId);
     _lessonTitleFuture = widget.databaseAPI.getLessonTitle(widget.lessonId);
+    _isAdminFuture = Future.value(widget.authAPI.getUserRole() == 'admin');
   }
 
   void _addComment() async {
@@ -43,7 +46,65 @@ class _LessonCommentSectionState extends State<LessonCommentSection> {
             widget.databaseAPI.getAllLessonComments(widget.lessonId);
       });
       _commentController.clear();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_scrollController.hasClients) {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        }
+      });
     }
+  }
+
+  void _deleteComment(String commentId) async {
+    await widget.databaseAPI.deleteComment(commentId);
+    setState(() {
+      _commentsFuture =
+          widget.databaseAPI.getAllLessonComments(widget.lessonId);
+    });
+  }
+
+  void _showDeleteDialog(
+      String commentId, String userName, String commentText) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete Comment'),
+          content: Text(
+              'Are you sure you want to delete this comment by $userName?\n\n"$commentText"'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _deleteComment(commentId);
+                Navigator.of(context).pop();
+              },
+              child: Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
   }
 
   String _formatTimestamp(String timestamp) {
@@ -102,55 +163,84 @@ class _LessonCommentSectionState extends State<LessonCommentSection> {
                         return Center(child: Text('No comments found'));
                       } else {
                         final comments = snapshot.data!;
-                        return ListView.builder(
-                          itemCount: comments.length,
-                          itemBuilder: (context, index) {
-                            final comment = comments[index];
-                            return FutureBuilder<String>(
-                              future: comment['userName'] != null
-                                  ? Future.value(comment['userName'])
-                                  : Future.value('unknown'),
-                              builder: (context, userSnapshot) {
-                                if (userSnapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return ListTile(
-                                    leading: CircleAvatar(
-                                      child: Text('...'),
-                                    ),
-                                    title: Text('Loading...'),
-                                    subtitle: Text(comment['comment']),
+                        return FutureBuilder<bool>(
+                          future: _isAdminFuture,
+                          builder: (context, adminSnapshot) {
+                            if (adminSnapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(child: CircularProgressIndicator());
+                            } else if (adminSnapshot.hasError) {
+                              return Center(
+                                  child: Text('Error checking admin status'));
+                            } else {
+                              final isAdmin = adminSnapshot.data ?? false;
+                              return ListView.builder(
+                                controller: _scrollController,
+                                itemCount: comments.length,
+                                itemBuilder: (context, index) {
+                                  final comment = comments[index];
+                                  return FutureBuilder<String>(
+                                    future: comment['userName'] != null
+                                        ? Future.value(comment['userName'])
+                                        : Future.value('unknown'),
+                                    builder: (context, userSnapshot) {
+                                      if (userSnapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return ListTile(
+                                          leading: CircleAvatar(
+                                            child: Text('...'),
+                                          ),
+                                          title: Text('Loading...'),
+                                          subtitle: Text(comment['comment']),
+                                        );
+                                      } else if (userSnapshot.hasError) {
+                                        return ListTile(
+                                          leading: CircleAvatar(
+                                            child: Text('?'),
+                                          ),
+                                          title: Text('Error'),
+                                          subtitle: Text(comment['comment']),
+                                        );
+                                      } else {
+                                        final userName =
+                                            userSnapshot.data ?? 'Unknown';
+                                        return ListTile(
+                                          leading: CircleAvatar(
+                                            child:
+                                                Text(userName[0].toUpperCase()),
+                                          ),
+                                          title: Row(
+                                            children: [
+                                              Text(userName),
+                                              SizedBox(width: 8),
+                                              Text(
+                                                _formatTimestamp(
+                                                    comment['timestamp']),
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.grey),
+                                              ),
+                                            ],
+                                          ),
+                                          subtitle: Text(comment['comment']),
+                                          trailing: isAdmin
+                                              ? IconButton(
+                                                  icon: Icon(Icons.delete),
+                                                  onPressed: () {
+                                                    _showDeleteDialog(
+                                                        comment['\$id'],
+                                                        userName,
+                                                        comment['comment']);
+                                                  },
+                                                )
+                                              : null,
+                                        );
+                                      }
+                                    },
                                   );
-                                } else if (userSnapshot.hasError) {
-                                  return ListTile(
-                                    leading: CircleAvatar(
-                                      child: Text('?'),
-                                    ),
-                                    title: Text('Error'),
-                                    subtitle: Text(comment['comment']),
-                                  );
-                                } else {
-                                  final userName = userSnapshot.data!;
-                                  return ListTile(
-                                    leading: CircleAvatar(
-                                      child: Text(userName[0].toUpperCase()),
-                                    ),
-                                    title: Row(
-                                      children: [
-                                        Text(userName),
-                                        SizedBox(width: 8),
-                                        Text(
-                                          _formatTimestamp(
-                                              comment['timestamp']),
-                                          style: TextStyle(
-                                              fontSize: 12, color: Colors.grey),
-                                        ),
-                                      ],
-                                    ),
-                                    subtitle: Text(comment['comment']),
-                                  );
-                                }
-                              },
-                            );
+                                },
+                              );
+                            }
                           },
                         );
                       }
@@ -158,7 +248,8 @@ class _LessonCommentSectionState extends State<LessonCommentSection> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding:
+                      const EdgeInsets.only(left: 16, right: 16, bottom: 40),
                   child: Row(
                     children: [
                       Expanded(
@@ -166,13 +257,20 @@ class _LessonCommentSectionState extends State<LessonCommentSection> {
                           controller: _commentController,
                           decoration: InputDecoration(
                             hintText: 'Enter your comment',
-                            border: OutlineInputBorder(),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(24.0),
+                            ),
                           ),
                         ),
                       ),
                       SizedBox(width: 8),
                       ElevatedButton(
                         onPressed: _addComment,
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24.0),
+                          ),
+                        ),
                         child: Text('Submit'),
                       ),
                     ],
