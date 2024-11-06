@@ -168,7 +168,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           MaterialPageRoute(
                             builder: (context) => LessonViewer(
                               content: content,
-                              title: 'Lesson Viewer',
                               lessonId: lesson['\$id'],
                               userId: widget.userId,
                               isCompleted: lesson['completed'] ?? false,
@@ -183,7 +182,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   lesson['completed'] = true;
                                 });
                                 Navigator.pop(context); // Return to HomeScreen
-                              },
+                              }, authAPI: widget.authAPI,
                             ),
                           ),
                         );
@@ -223,15 +222,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             )
-          : FloatingActionButton(
-              backgroundColor: Theme.of(context).colorScheme.secondary,
-              heroTag: "commentsButton",
-              onPressed: () {
-                Navigator.pushNamed(context, '/comments');
-              },
-              tooltip: 'Give thoughts and comments',
-              child: const Icon(Icons.feedback),
-            ),
+          : null,
     );
   }
 }

@@ -46,8 +46,7 @@ class DatabaseAPI {
   }
 
   /// Adds a comment to a specific lesson or as a general comment in the comments collection.
-  Future<void> addComment(
-      String lessonId, String userId, String commentText) async {
+  Future<void> addComment(String lessonId, String userId, String userName, String commentText) async {
     try {
       await database.createDocument(
         databaseId: AppConstants.databaseId,
@@ -56,6 +55,7 @@ class DatabaseAPI {
         data: {
           'lessonId': lessonId == 'general' ? null : lessonId,
           'userId': userId,
+          'userName': userName,
           'comment': commentText,
           'timestamp': DateTime.now().toIso8601String(),
         },
@@ -229,6 +229,21 @@ class DatabaseAPI {
       LogService.instance.error(
           "Error checking completion status for user $userId on lesson $lessonId: $e");
       return false;
+    }
+  }
+
+  /// Retrieves the title of a specific lesson from the lessons collection.
+  Future<String?> getLessonTitle(String lessonId) async {
+    try {
+      final response = await database.getDocument(
+        databaseId: AppConstants.databaseId,
+        collectionId: AppConstants.lessonsCollectionId,
+        documentId: lessonId,
+      );
+      return response.data['title'];
+    } catch (e) {
+      LogService.instance.error("Error fetching lesson title: $e");
+      return null;
     }
   }
 }

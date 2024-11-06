@@ -7,7 +7,6 @@ import 'package:appwrite/appwrite.dart';
 import 'constants.dart';
 import 'theme.dart';
 import 'screens/home_screen.dart';
-import 'screens/comments_screen.dart';
 import 'screens/login_register_screen.dart';
 
 void main() {
@@ -109,10 +108,6 @@ class _MyAppState extends State<MyApp> {
               userRole: userRole,
               userId: userId!,
             ),
-        '/comments': (context) {
-          LogService.instance.info("Navigated to CommentsScreen");
-          return CommentsScreen(databaseAPI: widget.database, userId: userId!);
-        },
         '/login': (context) => LoginRegisterScreen(
               widget.authAPI,
               onLoginSuccess: () =>

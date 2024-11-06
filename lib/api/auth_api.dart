@@ -21,8 +21,14 @@ class AuthAPI {
     return user.prefs.data['role'] as String?;
   }
 
+  Future<String?> getUserName() async {
+    final user = await account.get();
+    return user.name;
+  }
+
   /// Registers a new user with email and password
-  Future<models.User?> registerUser(String email, String password, String name) async {
+  Future<models.User?> registerUser(
+      String email, String password, String name) async {
     try {
       return await account.create(
         userId: ID.unique(),

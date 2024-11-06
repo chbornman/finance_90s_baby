@@ -1,23 +1,24 @@
+import 'package:finance_90s_baby/api/auth_api.dart';
 import 'package:finance_90s_baby/api/database_api.dart';
 import 'package:finance_90s_baby/lesson_comment_section.dart';
-import 'package:finance_90s_baby/log_service.dart';
+import 'package:finance_90s_baby/markdown_utilities.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
 class LessonViewer extends StatefulWidget {
-  final String title;
   final String content;
   bool isCompleted;
   final DatabaseAPI databaseAPI;
+  final AuthAPI authAPI;
   final String userId;
   final String lessonId;
   final Future<void> Function() onComplete;
 
   LessonViewer({
-    required this.title,
     required this.content,
     required this.isCompleted,
     required this.databaseAPI,
+    required this.authAPI,
     required this.userId,
     required this.lessonId,
     required this.onComplete,
@@ -30,45 +31,22 @@ class LessonViewer extends StatefulWidget {
 class _LessonViewerState extends State<LessonViewer> {
   final ScrollController _scrollController = ScrollController();
 
-  void _leaveCommentOnLesson() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        String commentText = '';
-        return AlertDialog(
-          title: Text('Leave a Comment'),
-          content: TextField(
-            onChanged: (value) {
-              commentText = value;
-            },
-            decoration: InputDecoration(hintText: 'Enter your comment'),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                widget.databaseAPI
-                    .addComment(widget.lessonId, widget.userId, commentText);
-                Navigator.of(context).pop();
-              },
-              child: Text('Submit Comment'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: FutureBuilder<String?>(
+          future: widget.databaseAPI.getLessonTitle(widget.lessonId),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return CircularProgressIndicator();
+            } else if (snapshot.hasError) {
+              return Text('Error');
+            } else {
+              return Text(snapshot.data ?? 'No Title');
+            }
+          },
+        ),
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
       ),
@@ -116,6 +94,7 @@ class _LessonViewerState extends State<LessonViewer> {
                         databaseAPI: widget.databaseAPI,
                         lessonId: widget.lessonId,
                         userId: widget.userId,
+                        authAPI: widget.authAPI,
                       ),
                     ),
                   );
