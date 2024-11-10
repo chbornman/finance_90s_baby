@@ -1,5 +1,6 @@
 import 'package:finance_90s_baby/api/auth_api.dart';
 import 'package:finance_90s_baby/api/database_api.dart';
+import 'package:finance_90s_baby/log_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -146,13 +147,11 @@ class _LessonCommentSectionState extends State<LessonCommentSection> {
                     child: Text(
                       lessonTitle,
                       overflow: TextOverflow.ellipsis,
-                      softWrap: true,
+                      softWrap: false,
                     ),
                   ),
                 ],
               ),
-              backgroundColor: Theme.of(context).primaryColor,
-              foregroundColor: Theme.of(context).colorScheme.onPrimary,
             ),
             body: Column(
               children: [
@@ -183,6 +182,8 @@ class _LessonCommentSectionState extends State<LessonCommentSection> {
                                 controller: _scrollController,
                                 itemCount: comments.length,
                                 itemBuilder: (context, index) {
+                                  LogService.instance.info(
+                                      'Building comment at index: $index'); // Log index TODO some error if no prior comment documents
                                   final comment = comments[index];
                                   return FutureBuilder<String>(
                                     future: comment['userName'] != null
